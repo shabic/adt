@@ -64,10 +64,10 @@ def backup(package, device, output):
 
 
 @data.command()
-@click.argument('package', required=False)
 @click.argument('file', type=click.Path(exists=True))
+@click.argument('package', required=False)
 @click.option('-d', '--device', help='Device serial number')
-def restore(package, file, device):
+def restore(file, package, device):
     """Restore app data from tar.gz backup.
 
     If PACKAGE is not provided, uses the current foreground app.

@@ -4,10 +4,10 @@ A modern Python CLI tool for Android debugging and reverse engineering, porting 
 
 ## Features
 
-- **App Management**: Get app info, kill, pull APKs, backup/restore data
+- **App Management**: Get app info, kill, pull APKs, view activities
 - **Process Information**: View memory maps, file descriptors, process status
 - **Memory Dump**: Dump memory ranges or SO libraries from running processes
-- **Data Operations**: Backup/restore app data
+- **Data Operations**: Backup/restore app data, search in app data
 - **Utilities**: Get device IP, system properties, execute root commands
 
 ## Installation
@@ -70,6 +70,12 @@ adt app ps
 
 # Get app path
 adt app path
+
+# Show current foreground activity
+adt app activity
+
+# Show all activities in the stack
+adt app activities
 ```
 
 ### Memory Dump
@@ -95,7 +101,8 @@ adt dump-memory --so libc.so
 adt data backup
 
 # Restore app data (requires root)
-adt data restore com.example.app backup.tar.gz
+adt data restore backup.tar.gz
+adt data restore backup.tar.gz com.example.app
 
 # Search in app data (requires root)
 adt data grep "pattern"
@@ -142,23 +149,23 @@ Select process [1]: 2
 
 ```bash
 # Send text input to device
-adt input text "Hello World"
+adt input-text "Hello World"
 ```
 
 ### Utilities
 
 ```bash
 # Get device IP address
-adt utils ip
+adt ip
 
 # Get system property
-adt utils getprop ro.build.version.release
+adt getprop ro.build.version.release
 
 # List all properties
-adt utils getprop
+adt getprop
 
 # Execute command as root
-adt utils su "ls /data/data"
+adt su "ls /data/data"
 ```
 
 ### Multi-Device Support
@@ -197,36 +204,12 @@ adt app info -d 2816c5b
 - **click**: CLI framework
 - **rich**: Beautiful terminal output
 
-## Project Structure
-
-```
-adt/
-├── pyproject.toml          # Project configuration
-├── src/
-│   └── adt/
-│       ├── __init__.py
-│       ├── __main__.py    # Entry point
-│       ├── cli.py         # Main CLI
-│       ├── core/          # Core abstractions
-│       │   ├── adb.py     # ADB wrapper
-│       │   ├── device.py  # Device manager
-│       │   ├── package.py # Package resolver
-│       │   └── utils.py   # Utility functions
-│       └── commands/      # CLI command groups
-│           ├── app.py     # App management
-│           ├── data.py    # Data operations
-│           ├── memory.py  # Memory dump
-│           ├── process.py # Process info
-│           ├── input.py   # Input commands
-│           └── utils.py   # Utilities
-```
-
 ## Notes
 
 - Commands that accept `[PACKAGE]` will auto-detect the foreground app if not specified
 - Process commands (`maps`, `fds`, `status`) use `ps -A` to detect all processes (not just main process)
 - Process commands will automatically try root access if needed
-- **Pipe-friendly**: When output is piped (e.g., `adt process maps | grep xxx`), automatically selects first device/process
+- **Pipe-friendly**: When output is piped (e.g., `adt proc maps | grep xxx`), automatically selects first device/process
 - Root commands require a rooted device with `su` available
 - Memory dump uses `dd` on `/proc/pid/mem`, requires root
 - `--so` mode dumps in-memory image (PT_LOAD segments only, not identical to on-disk file)
