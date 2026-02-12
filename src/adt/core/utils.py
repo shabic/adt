@@ -22,8 +22,9 @@ def validate_package_name(package: str) -> bool:
     Returns:
         True if valid, False otherwise
     """
-    # Android package names can only contain letters, digits, underscores, and dots
-    return bool(re.match(r'^[a-zA-Z0-9._]+$', package))
+    # Android package names: segments separated by dots, each starting with letter
+    # Format: com.example.app (no consecutive dots, no leading/trailing dots)
+    return bool(re.match(r'^[a-zA-Z][a-zA-Z0-9_]*(\.[a-zA-Z][a-zA-Z0-9_]*)+$', package))
 
 
 def escape_shell_arg(arg: str) -> str:

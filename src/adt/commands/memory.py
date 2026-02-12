@@ -12,10 +12,26 @@ from .process import _select_process
 console = Console()
 console_stderr = Console(stderr=True)
 
-_MAX_PHNUM = 4096
-_MAX_PH_ENTRY_SIZE = 256
-_MAX_PH_TOTAL_SIZE = 8 * 1024 * 1024
-_ZERO_FILL_CHUNK = 1024 * 1024
+# ELF program header limits for safety checks
+_MAX_PHNUM = 4096  # Maximum number of program headers to prevent excessive memory allocation
+_MAX_PH_ENTRY_SIZE = 256  # Maximum size of a single program header entry
+_MAX_PH_TOTAL_SIZE = 8 * 1024 * 1024  # Maximum total size of all program headers (8MB)
+_ZERO_FILL_CHUNK = 1024 * 1024  # Chunk size for zero-filling gaps between segments (1MB)
+
+# ELF constants
+ELF_MAGIC = b'\x7fELF'  # ELF file magic number
+ELF_CLASS_32 = 1  # 32-bit ELF
+ELF_CLASS_64 = 2  # 64-bit ELF
+
+# ELF machine types (e_machine field)
+ELF_MACHINES = {
+    3: 'x86',
+    8: 'MIPS',
+    40: 'ARM',
+    62: 'x86_64',
+    183: 'AArch64',
+    243: 'RISC-V',
+}
 
 
 def _load_maps_entries(adb, pid):
@@ -71,7 +87,14 @@ def _segment_readable_now(adb, pid, start_addr, end_addr):
 
 
 def _parse_ls_size(ls_output):
-    """Parse file size from `ls -l` output."""
+    """Parse file size from `ls -l` output.
+
+    Args:
+        ls_output: Output string from `ls -l` command
+
+    Returns:
+        File size in bytes as integer, or None if parsing fails
+    """
     parts = ls_output.strip().split()
     if len(parts) < 5:
         return None
@@ -82,7 +105,14 @@ def _parse_ls_size(ls_output):
 
 
 def _path_total_size(entries):
-    """Calculate total bytes for a path group."""
+    """Calculate total bytes for a path group.
+
+    Args:
+        entries: List of tuples (start, end, line) representing memory segments
+
+    Returns:
+        Total size in bytes across all segments
+    """
     return sum((end - start) for start, end, _ in entries)
 
 
@@ -175,7 +205,19 @@ def _find_so_segments(adb, pid, so_name):
 
 
 def _read_mem(adb, pid, addr, size):
-    """Read raw bytes from /proc/{pid}/mem at given address."""
+    """Read raw bytes from /proc/{pid}/mem at given address.
+
+    Uses dd to extract memory region to a temporary file, then pulls it locally.
+
+    Args:
+        adb: ADB instance
+        pid: Process ID
+        addr: Starting memory address (integer)
+        size: Number of bytes to read
+
+    Returns:
+        Bytes object containing the memory data, or None if read fails
+    """
     remote_tmp = f"/data/local/tmp/memread_{pid}_{addr:x}.bin"
     dd_cmd = (
         f"dd if=/proc/{pid}/mem of={remote_tmp}"
@@ -220,18 +262,14 @@ def _detect_elf_arch(adb, pid, base_addr):
     if not ehdr or len(ehdr) < 20:
         return None, None
 
-    if ehdr[:4] != b'\x7fELF':
+    if ehdr[:4] != ELF_MAGIC:
         return None, None
 
     ei_class = ehdr[4]
     e_machine, = struct.unpack_from('<H', ehdr, 18)
 
-    _MACHINES = {
-        3: 'x86', 40: 'ARM', 62: 'x86_64', 183: 'AArch64',
-        8: 'MIPS', 243: 'RISC-V',
-    }
-    arch = _MACHINES.get(e_machine, f'EM_{e_machine}')
-    bits = {1: '32', 2: '64'}.get(ei_class, '?')
+    arch = ELF_MACHINES.get(e_machine, f'EM_{e_machine}')
+    bits = {ELF_CLASS_32: '32', ELF_CLASS_64: '64'}.get(ei_class, '?')
     return ei_class, f"{arch}({bits}bit)"
 
 

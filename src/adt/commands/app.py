@@ -42,14 +42,16 @@ def info(package, device):
             uid_match = re.search(r'uid=(\d+)', dumpsys_output)
             if uid_match:
                 uid = uid_match.group(1)
-        except Exception:
+        except (ADBError, ValueError, AttributeError):
+            # Silently fall back to Unknown if dumpsys fails
             pass
 
         # Get version
         version = "Unknown"
         try:
             version = resolver.get_version(pkg)
-        except Exception:
+        except (ADBError, ValueError):
+            # Silently fall back to Unknown if version detection fails
             pass
 
         # Get path
@@ -58,7 +60,8 @@ def info(package, device):
             path_output = adb.shell(f"pm path {pkg}")
             if path_output:
                 path = path_output.split(':', 1)[1].strip() if ':' in path_output else path_output
-        except Exception:
+        except (ADBError, ValueError, IndexError):
+            # Silently fall back to Unknown if path detection fails
             pass
 
         # Get architecture
@@ -69,7 +72,8 @@ def info(package, device):
                 arch_output = adb.shell(f"ls {lib_path}", check=False)
                 if arch_output and not arch_output.startswith("ls:"):
                     arch = arch_output.strip()
-            except Exception:
+            except (ADBError, ValueError):
+                # Silently fall back to Unknown if arch detection fails
                 pass
 
         # Display info

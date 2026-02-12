@@ -1,4 +1,5 @@
 """Data operation commands."""
+import re
 import sys
 import click
 from rich.console import Console
@@ -31,8 +32,8 @@ def backup(package, device, output):
         # Get version for filename
         if not output:
             version = resolver.get_version(pkg)
-            # Clean version string for filename
-            version = version.replace('(', '').replace(')', '').replace(' ', '')
+            # Clean version string for filename - remove invalid filename chars
+            version = re.sub(r'[^\w\.-]', '', version)
             output = f"{pkg}-{version}.tar.gz"
 
         console.print(f"Backing up {pkg}")
