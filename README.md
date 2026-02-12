@@ -1,6 +1,6 @@
 # ADT - Android Debug Tools
 
-A modern Python CLI tool for Android debugging and reverse engineering, porting PowerShell functions to a cross-platform solution.
+A modern Python CLI toolkit for Android debugging and development, providing enhanced adb commands with rich terminal output and interactive device selection.
 
 ## Features
 

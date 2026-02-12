@@ -4,7 +4,7 @@
 
 ## 项目概述
 
-ADT (Android Debug Tools) 是一个 Python CLI 工具，用于 Android 调试和逆向工程。基于 Click 构建 CLI，使用 Rich 美化终端输出，依赖 `adb`（需在 PATH 中）。
+ADT (Android Debug Tools) 是一个 Python CLI 工具集，用于 Android 调试和开发。基于 Click 构建 CLI，使用 Rich 美化终端输出，依赖 `adb`（需在 PATH 中）。
 
 ## 常用命令
 

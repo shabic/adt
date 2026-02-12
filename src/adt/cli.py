@@ -13,7 +13,7 @@ console = Console()
 def cli():
     """ADT - Android Debug Tools
 
-    A modern CLI for Android debugging and reverse engineering.
+    A modern CLI toolkit for Android debugging and development.
     """
     pass
 
