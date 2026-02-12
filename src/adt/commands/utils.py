@@ -4,6 +4,7 @@ import sys
 import click
 from rich.console import Console
 from ..core import DeviceManager, ADBError
+from ..core.utils import is_piped
 
 console = Console()
 
@@ -78,10 +79,23 @@ def getprop(key, device):
 
             # Format output: [key]: [value] -> key=value
             lines = output.strip().split('\n')
+            formatted_lines = []
             for line in lines:
                 # Remove brackets and format
                 formatted = line.replace(']: [', '=').replace('[', '').replace(']', '')
-                console.print(formatted)
+                formatted_lines.append(formatted)
+
+            # Use plain print in piped mode to avoid Rich Windows issues
+            if is_piped():
+                try:
+                    for line in formatted_lines:
+                        print(line)
+                except (BrokenPipeError, OSError):
+                    # Pipe closed (e.g., head/tail terminated early), exit gracefully
+                    sys.exit(0)
+            else:
+                for line in formatted_lines:
+                    console.print(line)
 
     except ADBError as e:
         console.print(f"[red]Error:[/red] {e}")
