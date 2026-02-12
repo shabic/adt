@@ -18,26 +18,41 @@ def cli():
     pass
 
 
-# Import command groups
-from .commands import app, data, process, utils
+# Import all commands
+from .commands import app, data, process, utils, input as input_cmd
+from .commands.memory import dump_memory
 
+# Register app commands
+cli.add_command(app.info, 'info')
+cli.add_command(app.kill, 'kill')
+cli.add_command(app.pull, 'pull')
+cli.add_command(app.pull_all, 'pull-all')
+cli.add_command(app.clean, 'clean')
+cli.add_command(app.uninstall, 'uninstall')
+cli.add_command(app.libs, 'libs')
+cli.add_command(app.ps, 'ps')
+cli.add_command(app.path, 'path')
+cli.add_command(app.activity, 'activity')
+cli.add_command(app.activities, 'activities')
+cli.add_command(app.install_multiple, 'install-multiple')
 
-# Register command groups
-cli.add_command(app.app)
-cli.add_command(data.data)
-cli.add_command(process.proc)
+# Register process commands
+cli.add_command(process.maps, 'maps')
+cli.add_command(process.fds, 'fds')
+cli.add_command(process.status, 'status')
 
-# Register top-level commands from utils
+# Register data commands
+cli.add_command(data.backup, 'backup')
+cli.add_command(data.restore, 'restore')
+cli.add_command(data.data_grep, 'grep')
+
+# Register utility commands
 for cmd_name, cmd_obj in utils.get_commands():
     cli.add_command(cmd_obj, cmd_name)
 
-# Register input-text as top-level command
-from .commands import input as input_cmd
+# Register other top-level commands
 cli.add_command(input_cmd.input_text, 'input-text')
-
-# Register dump-memory as top-level command
-from .commands.memory import dump_memory
-cli.add_command(dump_memory)
+cli.add_command(dump_memory, 'dump-memory')
 
 
 def main():

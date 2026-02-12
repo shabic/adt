@@ -139,13 +139,7 @@ def _select_process(adb, pkg: str) -> str:
             sys.exit(1)
 
 
-@click.group()
-def proc():
-    """Process information commands."""
-    pass
-
-
-@proc.command()
+@click.command()
 @click.argument('package', required=False)
 @click.option('-d', '--device', help='Device serial number')
 @click.option('-f', '--filter', help='Filter maps by pattern (e.g., .so, .dex)')
@@ -198,7 +192,7 @@ def maps(package, device, filter, pid):
         sys.exit(1)
 
 
-@proc.command()
+@click.command()
 @click.argument('package', required=False)
 @click.option('-d', '--device', help='Device serial number')
 @click.option('-p', '--pid', help='Specific PID (skip process selection)')
@@ -240,7 +234,7 @@ def fds(package, device, pid):
         sys.exit(1)
 
 
-@proc.command()
+@click.command()
 @click.argument('package', required=False)
 @click.option('-d', '--device', help='Device serial number')
 @click.option('-p', '--pid', help='Specific PID (skip process selection)')

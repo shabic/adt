@@ -8,13 +8,7 @@ from ..core import DeviceManager, PackageResolver, ADBError
 console = Console()
 
 
-@click.group()
-def data():
-    """Data operation commands (backup, restore, grep)."""
-    pass
-
-
-@data.command()
+@click.command()
 @click.argument('package', required=False)
 @click.option('-d', '--device', help='Device serial number')
 @click.option('-o', '--output', help='Output filename (default: <package>-<version>.tar.gz)')
@@ -64,11 +58,11 @@ def backup(package, device, output):
         sys.exit(1)
 
 
-@data.command()
-@click.argument('file', type=click.Path(exists=True))
+@click.command()
 @click.argument('package', required=False)
+@click.argument('file', type=click.Path(exists=True))
 @click.option('-d', '--device', help='Device serial number')
-def restore(file, package, device):
+def restore(package, file, device):
     """Restore app data from tar.gz backup.
 
     If PACKAGE is not provided, uses the current foreground app.
@@ -116,11 +110,11 @@ def restore(file, package, device):
         sys.exit(1)
 
 
-@data.command()
+@click.command('grep')
 @click.argument('pattern', required=True)
 @click.argument('package', required=False)
 @click.option('-d', '--device', help='Device serial number')
-def grep(pattern, package, device):
+def data_grep(pattern, package, device):
     """Search for pattern in app data directory.
 
     If PACKAGE is not provided, uses the current foreground app.

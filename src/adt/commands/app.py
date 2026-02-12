@@ -10,13 +10,7 @@ from ..core import DeviceManager, PackageResolver, ADBError, resolve_uid, escape
 console = Console()
 
 
-@click.group()
-def app():
-    """App management commands."""
-    pass
-
-
-@app.command()
+@click.command()
 @click.argument('package', required=False)
 @click.option('-d', '--device', help='Device serial number')
 def info(package, device):
@@ -95,7 +89,7 @@ def info(package, device):
         sys.exit(1)
 
 
-@app.command()
+@click.command()
 @click.argument('package', required=False)
 @click.option('-d', '--device', help='Device serial number')
 def kill(package, device):
@@ -116,7 +110,7 @@ def kill(package, device):
         sys.exit(1)
 
 
-@app.command()
+@click.command()
 @click.argument('package', required=False)
 @click.option('-d', '--device', help='Device serial number')
 def path(package, device):
@@ -144,7 +138,7 @@ def path(package, device):
         sys.exit(1)
 
 
-@app.command()
+@click.command()
 @click.argument('package', required=False)
 @click.option('-d', '--device', help='Device serial number')
 @click.option('-o', '--output', help='Output filename (default: <package>-<version>.apk)')
@@ -182,7 +176,7 @@ def pull(package, device, output):
         sys.exit(1)
 
 
-@app.command('pull-all')
+@click.command('pull-all')
 @click.argument('package', required=False)
 @click.option('-d', '--device', help='Device serial number')
 @click.option('-o', '--output-dir', help='Output directory (default: <version>)')
@@ -229,7 +223,7 @@ def pull_all(package, device, output_dir):
         sys.exit(1)
 
 
-@app.command()
+@click.command()
 @click.argument('package', required=False)
 @click.option('-d', '--device', help='Device serial number')
 @click.option('-y', '--yes', is_flag=True, help='Skip confirmation')
@@ -255,7 +249,7 @@ def clean(package, device, yes):
         sys.exit(1)
 
 
-@app.command()
+@click.command()
 @click.argument('package', required=False)
 @click.option('-d', '--device', help='Device serial number')
 @click.option('-y', '--yes', is_flag=True, help='Skip confirmation')
@@ -281,7 +275,7 @@ def uninstall(package, device, yes):
         sys.exit(1)
 
 
-@app.command()
+@click.command()
 @click.argument('package', required=False)
 @click.option('-d', '--device', help='Device serial number')
 def libs(package, device):
@@ -333,7 +327,7 @@ def libs(package, device):
         sys.exit(1)
 
 
-@app.command()
+@click.command()
 @click.argument('package', required=False)
 @click.option('-d', '--device', help='Device serial number')
 def ps(package, device):
@@ -362,7 +356,7 @@ def ps(package, device):
         sys.exit(1)
 
 
-@app.command('install-multiple')
+@click.command('install-multiple')
 @click.argument('directory', type=click.Path(exists=True, file_okay=False, dir_okay=True), required=False, default='.')
 @click.option('-d', '--device', help='Device serial number')
 @click.option('-r', '--replace', is_flag=True, help='Replace existing application')
@@ -475,7 +469,7 @@ def _display_activity_stack(device):
     console.print(table)
 
 
-@app.command()
+@click.command()
 @click.option('-d', '--device', help='Device serial number')
 def activity(device):
     """Show current foreground activity.
@@ -498,7 +492,7 @@ def activity(device):
         sys.exit(1)
 
 
-@app.command()
+@click.command()
 @click.option('-d', '--device', help='Device serial number')
 def activities(device):
     """Show all activities in the stack.
@@ -512,15 +506,3 @@ def activities(device):
         sys.exit(1)
 
 
-@app.command(name='activitys')
-@click.option('-d', '--device', help='Device serial number')
-def activitys_alias(device):
-    """Show all activities in the stack (alias for activities).
-
-    Displays all activities from dumpsys activity activities.
-    """
-    try:
-        _display_activity_stack(device)
-    except (ADBError, ValueError) as e:
-        console.print(f"[red]Error:[/red] {e}")
-        sys.exit(1)

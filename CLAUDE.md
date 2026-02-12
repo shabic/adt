@@ -25,18 +25,26 @@ flake8 src/
 
 ## 架构
 
-分层设计：CLI → Commands → Core → ADB → Device
+扁平化命令设计：CLI → Commands → Core → ADB → Device
 
-- **`src/adt/cli.py`** — Click 入口（`adt.cli:main`），注册所有命令组和顶层命令。
+- **`src/adt/cli.py`** — Click 入口（`adt.cli:main`），注册所有顶层命令（无命令组）。
 - **`src/adt/core/adb.py`** — `ADB` 类，封装所有 adb 子进程调用。所有设备交互都经过此类。处理设备选择（`-s`）、root 提权（`su -c`）和 shell 转义。
 - **`src/adt/core/device.py`** — `DeviceManager`，多设备选择，Rich 交互式表格展示。管道模式下自动选择第一个设备。
 - **`src/adt/core/package.py`** — `PackageResolver`，通过 `dumpsys` 检测前台应用，解析包名。
 - **`src/adt/core/utils.py`** — 公共校验/转义工具：`escape_shell_arg()`、`validate_package_name()`、`validate_pid()`、`is_piped()`。
-- **`src/adt/commands/`** — 按功能域组织的命令实现：`app.py`（应用管理）、`data.py`（备份/恢复/grep，需 root）、`process.py`（进程检查）、`memory.py`（内存 dump）、`input.py`（文本输入）、`utils.py`（ip/getprop/su）。
+- **`src/adt/commands/`** — 按功能域组织的命令实现，所有命令都是顶层命令：
+  - `app.py` — 应用管理：`info`, `kill`, `pull`, `pull-all`, `clean`, `uninstall`, `libs`, `ps`, `path`, `activity`, `activities`, `install-multiple`
+  - `data.py` — 数据操作（需 root）：`backup`, `restore`, `grep`
+  - `process.py` — 进程信息：`maps`, `fds`, `status`
+  - `memory.py` — 内存 dump：`dump-memory`
+  - `input.py` — 输入命令：`input-text`
+  - `utils.py` — 工具命令：`ip`, `getprop`, `su`
 
 ## 关键约定
 
+- 所有命令都是顶层命令（扁平化设计），无命令组。例如：`adt info`、`adt maps`、`adt backup`。
 - 所有命令支持 `-d DEVICE_ID` 选择设备、可选的 `[PACKAGE]` 位置参数指定包名。省略包名时自动检测前台应用。
+- `data restore` 命令参数顺序：`adt restore [PACKAGE] <FILE>`，PACKAGE 在前，FILE 在后。
 - 传给 `adb shell` 的参数必须通过 `core/utils.py` 中的 `escape_shell_arg()` 转义，防止注入。
 - 用户输入（包名、PID）必须使用 `core/utils.py` 中的校验函数验证。
 - Root 命令使用 `ADB.shell(command, root=True)`，内部以 `su -c` 包装。

@@ -33,49 +33,49 @@ This will install the `adt` command globally.
 
 ```bash
 # Show app information (auto-detects foreground app)
-adt app info
+adt info
 
 # Show info for specific package
-adt app info com.example.app
+adt info com.example.app
 
 # Kill foreground app
-adt app kill
+adt kill
 
 # Pull APK with version in filename
-adt app pull
+adt pull
 
 # Pull all APKs (including splits)
-adt app pull-all
+adt pull-all
 
 # Install split APKs from directory (default: current directory)
-adt app install-multiple
+adt install-multiple
 
 # Install split APKs from specific directory
-adt app install-multiple ./27.2.0.0/
+adt install-multiple ./27.2.0.0/
 
 # Install split APKs and replace existing app
-adt app install-multiple -r
+adt install-multiple -r
 
 # Clear app data
-adt app clean
+adt clean
 
 # Uninstall app
-adt app uninstall
+adt uninstall
 
 # List native libraries
-adt app libs
+adt libs
 
 # Show app processes
-adt app ps
+adt ps
 
 # Get app path
-adt app path
+adt path
 
 # Show current foreground activity
-adt app activity
+adt activity
 
 # Show all activities in the stack
-adt app activities
+adt activities
 ```
 
 ### Memory Dump
@@ -98,35 +98,35 @@ adt dump-memory --so libc.so
 
 ```bash
 # Backup app data (requires root)
-adt data backup
+adt backup
 
 # Restore app data (requires root)
-adt data restore backup.tar.gz
-adt data restore backup.tar.gz com.example.app
+adt restore backup.tar.gz
+adt restore com.example.app backup.tar.gz
 
 # Search in app data (requires root)
-adt data grep "pattern"
+adt grep "pattern"
 ```
 
 ### Process Information
 
 ```bash
 # Show memory maps (auto-selects process if multiple)
-adt proc maps
+adt maps
 
 # Show memory maps with filter (faster for large outputs)
-adt proc maps --filter .so
-adt proc maps --filter .dex
-adt proc maps -f libnative
+adt maps --filter .so
+adt maps --filter .dex
+adt maps -f libnative
 
 # Specify PID directly (skip process selection)
-adt proc maps --pid 12345
+adt maps --pid 12345
 
 # Show file descriptors
-adt proc fds
+adt fds
 
 # Show process status
-adt proc status
+adt status
 ```
 
 **Multi-Process Selection:**
@@ -196,7 +196,7 @@ Features:
 Or specify device explicitly:
 
 ```bash
-adt app info -d 2816c5b
+adt info -d 2816c5b
 ```
 
 ## Dependencies
@@ -209,14 +209,14 @@ adt app info -d 2816c5b
 - Commands that accept `[PACKAGE]` will auto-detect the foreground app if not specified
 - Process commands (`maps`, `fds`, `status`) use `ps -A` to detect all processes (not just main process)
 - Process commands will automatically try root access if needed
-- **Pipe-friendly**: When output is piped (e.g., `adt proc maps | grep xxx`), automatically selects first device/process
+- **Pipe-friendly**: When output is piped (e.g., `adt maps | grep xxx`), automatically selects first device/process
 - Root commands require a rooted device with `su` available
 - Memory dump uses `dd` on `/proc/pid/mem`, requires root
 - `--so` mode dumps in-memory image (PT_LOAD segments only, not identical to on-disk file)
 
 ## Performance Tips
 
-- Use `adt proc maps --filter <pattern>` to filter large outputs on the device side
+- Use `adt maps --filter <pattern>` to filter large outputs on the device side
 - Process commands use direct output for maximum speed
 - Filter examples: `--filter .so`, `--filter .dex`, `--filter libnative`
 - When piping output, selection prompts are automatically skipped
