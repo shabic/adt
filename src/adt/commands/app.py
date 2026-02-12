@@ -138,11 +138,11 @@ def path(package, device):
         sys.exit(1)
 
 
-@click.command()
+@click.command('pull-apk')
 @click.argument('package', required=False)
 @click.option('-d', '--device', help='Device serial number')
 @click.option('-o', '--output', help='Output filename (default: <package>-<version>.apk)')
-def pull(package, device, output):
+def pull_apk(package, device, output):
     """Pull base APK from device.
 
     If PACKAGE is not provided, uses the current foreground app.
@@ -176,11 +176,11 @@ def pull(package, device, output):
         sys.exit(1)
 
 
-@click.command('pull-all')
+@click.command('pull-apks')
 @click.argument('package', required=False)
 @click.option('-d', '--device', help='Device serial number')
 @click.option('-o', '--output-dir', help='Output directory (default: <version>)')
-def pull_all(package, device, output_dir):
+def pull_apks(package, device, output_dir):
     """Pull all APKs (including splits) from device.
 
     If PACKAGE is not provided, uses the current foreground app.

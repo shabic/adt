@@ -33,7 +33,7 @@ flake8 src/
 - **`src/adt/core/package.py`** — `PackageResolver`，通过 `dumpsys` 检测前台应用，解析包名。
 - **`src/adt/core/utils.py`** — 公共校验/转义工具：`escape_shell_arg()`、`validate_package_name()`、`validate_pid()`、`is_piped()`。
 - **`src/adt/commands/`** — 按功能域组织的命令实现，所有命令都是顶层命令：
-  - `app.py` — 应用管理：`info`, `kill`, `pull`, `pull-all`, `clean`, `uninstall`, `libs`, `ps`, `path`, `activity`, `activities`, `install-multiple`
+  - `app.py` — 应用管理：`info`, `kill`, `pull-apk`, `pull-apks`, `clean`, `uninstall`, `libs`, `ps`, `path`, `activity`, `activities`, `install-multiple`
   - `data.py` — 数据操作（需 root）：`backup`, `restore`, `grep`
   - `process.py` — 进程信息：`maps`, `fds`, `status`
   - `memory.py` — 内存 dump：`dump-memory`

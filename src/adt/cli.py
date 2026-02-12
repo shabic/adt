@@ -25,8 +25,8 @@ from .commands.memory import dump_memory
 # Register app commands
 cli.add_command(app.info, 'info')
 cli.add_command(app.kill, 'kill')
-cli.add_command(app.pull, 'pull')
-cli.add_command(app.pull_all, 'pull-all')
+cli.add_command(app.pull_apk, 'pull-apk')
+cli.add_command(app.pull_apks, 'pull-apks')
 cli.add_command(app.clean, 'clean')
 cli.add_command(app.uninstall, 'uninstall')
 cli.add_command(app.libs, 'libs')

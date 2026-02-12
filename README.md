@@ -41,11 +41,11 @@ adt info com.example.app
 # Kill foreground app
 adt kill
 
-# Pull APK with version in filename
-adt pull
+# Pull base APK with version in filename
+adt pull-apk
 
 # Pull all APKs (including splits)
-adt pull-all
+adt pull-apks
 
 # Install split APKs from directory (default: current directory)
 adt install-multiple
