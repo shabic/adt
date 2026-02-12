@@ -1,6 +1,8 @@
-# ADT - Android Debug Tools
+# Adive - Android Dive Tools
 
-A modern Python CLI toolkit for Android debugging and development, providing enhanced adb commands with rich terminal output and interactive device selection.
+A modern Python CLI toolkit for Android debugging and exploration, providing enhanced adb commands with rich terminal output and interactive device selection.
+
+Dive deep into your Android apps and devices.
 
 ## Features
 
@@ -21,11 +23,11 @@ A modern Python CLI toolkit for Android debugging and development, providing enh
 ### Install from source
 
 ```bash
-cd adt
+cd adive
 pip install -e .
 ```
 
-This will install the `adt` command globally.
+This will install the `adive` command globally.
 
 ## Usage
 
@@ -33,100 +35,101 @@ This will install the `adt` command globally.
 
 ```bash
 # Show app information (auto-detects foreground app)
-adt info
+adive info
+adive info
 
 # Show info for specific package
-adt info com.example.app
+adive info com.example.app
 
 # Kill foreground app
-adt kill
+adive kill
 
 # Pull base APK with version in filename
-adt pull-apk
+adive pull-apk
 
 # Pull all APKs (including splits)
-adt pull-apks
+adive pull-apks
 
 # Install split APKs from directory (default: current directory)
-adt install-multiple
+adive install-multiple
 
 # Install split APKs from specific directory
-adt install-multiple ./27.2.0.0/
+adive install-multiple ./27.2.0.0/
 
 # Install split APKs and replace existing app
-adt install-multiple -r
+adive install-multiple -r
 
 # Clear app data
-adt clean
+adive clean
 
 # Uninstall app
-adt uninstall
+adive uninstall
 
 # List native libraries
-adt libs
+adive libs
 
 # Show app processes
-adt ps
+adive ps
 
 # Get app path
-adt path
+adive path
 
 # Show current foreground activity
-adt activity
+adive activity
 
 # Show all activities in the stack
-adt activities
+adive activities
 ```
 
 ### Memory Dump
 
 ```bash
 # Dump a specific address range (requires root)
-adt dump-memory 0x12345000 0x12346000 com.example.app
+adive dump-memory 0x12345000 0x12346000 com.example.app
 
 # Dump all readable regions of a specific SO (requires root)
-adt dump-memory --so libc.so com.example.app
+adive dump-memory --so libc.so com.example.app
 
 # Dump SO with custom output path
-adt dump-memory --so libc.so -o /tmp/libc_dump.so com.example.app
+adive dump-memory --so libc.so -o /tmp/libc_dump.so com.example.app
 
 # Omit package to auto-detect foreground app
-adt dump-memory --so libc.so
+adive dump-memory --so libc.so
 ```
 
 ### Data Operations
 
 ```bash
 # Backup app data (requires root)
-adt backup
+adive backup
 
 # Restore app data (requires root)
-adt restore backup.tar.gz
-adt restore com.example.app backup.tar.gz
+adive restore backup.tar.gz
+adive restore com.example.app backup.tar.gz
 
 # Search in app data (requires root)
-adt grep "pattern"
+adive grep "pattern"
 ```
 
 ### Process Information
 
 ```bash
 # Show memory maps (auto-selects process if multiple)
-adt maps
+adive maps
 
 # Show memory maps with filter (faster for large outputs)
-adt maps --filter .so
-adt maps --filter .dex
-adt maps -f libnative
+adive maps --filter .so
+adive maps --filter .dex
+adive maps -f libnative
 
 # Specify PID directly (skip process selection)
-adt maps --pid 12345
+adive maps --pid 12345
 
 # Show file descriptors
-adt fds
+adive fds
 
 # Show process status
-adt status
+adive status
 ```
 
 **Multi-Process Selection:**
@@ -149,23 +152,23 @@ Select process [1]: 2
 
 ```bash
 # Send text input to device
-adt input-text "Hello World"
+adive input-text "Hello World"
 ```
 
 ### Utilities
 
 ```bash
 # Get device IP address
-adt ip
+adive ip
 
 # Get system property
-adt getprop ro.build.version.release
+adive getprop ro.build.version.release
 
 # List all properties
-adt getprop
+adive getprop
 
 # Execute command as root
-adt su "ls /data/data"
+adive su "ls /data/data"
 ```
 
 ### Multi-Device Support
@@ -196,7 +199,7 @@ Features:
 Or specify device explicitly:
 
 ```bash
-adt info -d 2816c5b
+adive info -d 2816c5b
 ```
 
 ## Dependencies
@@ -209,14 +212,14 @@ adt info -d 2816c5b
 - Commands that accept `[PACKAGE]` will auto-detect the foreground app if not specified
 - Process commands (`maps`, `fds`, `status`) use `ps -A` to detect all processes (not just main process)
 - Process commands will automatically try root access if needed
-- **Pipe-friendly**: When output is piped (e.g., `adt maps | grep xxx`), automatically selects first device/process
+- **Pipe-friendly**: When output is piped (e.g., `adive maps | grep xxx`), automatically selects first device/process
 - Root commands require a rooted device with `su` available
 - Memory dump uses `dd` on `/proc/pid/mem`, requires root
 - `--so` mode dumps in-memory image (PT_LOAD segments only, not identical to on-disk file)
 
 ## Performance Tips
 
-- Use `adt maps --filter <pattern>` to filter large outputs on the device side
+- Use `adive maps --filter <pattern>` to filter large outputs on the device side
 - Process commands use direct output for maximum speed
 - Filter examples: `--filter .so`, `--filter .dex`, `--filter libnative`
 - When piping output, selection prompts are automatically skipped
