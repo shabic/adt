@@ -33,7 +33,7 @@ flake8 src/
 - **`src/adive/core/package.py`** — `PackageResolver`，通过 `dumpsys` 检测前台应用，解析包名。
 - **`src/adive/core/utils.py`** — 公共校验/转义工具：`escape_shell_arg()`、`validate_package_name()`、`validate_pid()`、`is_piped()`。
 - **`src/adive/commands/`** — 按功能域组织的命令实现，所有命令都是顶层命令：
-  - `app.py` — 应用管理：`info`, `kill`, `pull-apk`, `pull-apks`, `clean`, `uninstall`, `libs`, `ps`, `path`, `activity`, `activities`, `install-multiple`
+  - `app.py` — 应用管理：`current`, `kill`, `pull-apk`, `pull-apks`, `clean`, `uninstall`, `libs`, `ps`, `path`, `uid`, `activity`, `activities`, `install-multiple`
   - `data.py` — 数据操作（需 root）：`backup`, `restore`, `grep`
   - `process.py` — 进程信息：`maps`, `fds`, `status`
   - `memory.py` — 内存 dump：`dump-memory`
@@ -42,7 +42,7 @@ flake8 src/
 
 ## 关键约定
 
-- 所有命令都是顶层命令（扁平化设计），无命令组。例如：`adive info`、`adive maps`、`adive backup`。
+- 所有命令都是顶层命令（扁平化设计），无命令组。例如：`adive current`、`adive maps`、`adive backup`。
 - 所有命令支持 `-d DEVICE_ID` 选择设备、可选的 `[PACKAGE]` 位置参数指定包名。省略包名时自动检测前台应用。
 - `data restore` 命令参数顺序：`adive restore [PACKAGE] <FILE>`，PACKAGE 在前，FILE 在后。
 - 传给 `adb shell` 的参数必须通过 `core/utils.py` 中的 `escape_shell_arg()` 转义，防止注入。

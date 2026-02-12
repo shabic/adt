@@ -35,11 +35,10 @@ This will install the `adive` command globally.
 
 ```bash
 # Show app information (auto-detects foreground app)
-adive info
-adive info
+adive current
 
 # Show info for specific package
-adive info com.example.app
+adive current com.example.app
 
 # Kill foreground app
 adive kill
@@ -73,6 +72,9 @@ adive ps
 
 # Get app path
 adive path
+
+# Get numeric UID
+adive uid
 
 # Show current foreground activity
 adive activity
@@ -199,7 +201,7 @@ Features:
 Or specify device explicitly:
 
 ```bash
-adive info -d 2816c5b
+adive current -d 2816c5b
 ```
 
 ## Dependencies

@@ -88,3 +88,24 @@ def resolve_uid(adb, pkg: str) -> Optional[str]:
                 return parts[0]
 
     return None
+
+
+def resolve_numeric_uid(adb, pkg: str) -> Optional[str]:
+    """Resolve the numeric UID for an Android package.
+
+    Args:
+        adb: ADB instance
+        pkg: Validated package name
+
+    Returns:
+        Numeric UID string, or None if not found
+    """
+    try:
+        dumpsys_output = adb.shell(f"dumpsys package {pkg}")
+        uid_match = re.search(r'uid=(\d+)', dumpsys_output)
+        if uid_match:
+            return uid_match.group(1)
+    except Exception:
+        pass
+    return None
+

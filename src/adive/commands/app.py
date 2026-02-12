@@ -5,7 +5,7 @@ import os
 import re
 from rich.console import Console
 from rich.table import Table
-from ..core import DeviceManager, PackageResolver, ADBError, resolve_uid, escape_shell_arg
+from ..core import DeviceManager, PackageResolver, ADBError, resolve_uid, resolve_numeric_uid, escape_shell_arg
 
 console = Console()
 
@@ -13,7 +13,7 @@ console = Console()
 @click.command()
 @click.argument('package', required=False)
 @click.option('-d', '--device', help='Device serial number')
-def info(package, device):
+def current(package, device):
     """Show comprehensive app information.
 
     If PACKAGE is not provided, uses the current foreground app.
@@ -25,20 +25,35 @@ def info(package, device):
 
         console.print(f"[bold cyan]App Information:[/bold cyan] {pkg}\n")
 
-        # Get PID
-        pid_output = adb.shell(f"pidof {pkg}", check=False)
-        pid = pid_output.strip() if pid_output else "Not running"
+        # Get UID and PIDs (can be multiple processes)
+        uid = resolve_uid(adb, pkg)
+        numeric_uid = resolve_numeric_uid(adb, pkg)
+        pids = []
+        pid_display = "Not running"
 
-        # Get UID
-        uid = "Unknown"
-        try:
-            dumpsys_output = adb.shell(f"dumpsys package {pkg}")
-            uid_match = re.search(r'uid=(\d+)', dumpsys_output)
-            if uid_match:
-                uid = uid_match.group(1)
-        except (ADBError, ValueError, AttributeError):
-            # Silently fall back to Unknown if dumpsys fails
-            pass
+        if uid:
+            try:
+                # Get all PIDs with this UID (uid is already in username format from resolve_uid)
+                escaped_uid = escape_shell_arg(uid)
+                ps_output = adb.shell(f"ps -A | grep -wF '{escaped_uid}'", check=False)
+                if ps_output and ps_output.strip():
+                    # Parse PIDs from ps output (PID is the second column)
+                    for line in ps_output.strip().split('\n'):
+                        parts = line.split()
+                        if len(parts) >= 2 and parts[1].isdigit():
+                            pids.append(parts[1])
+                    if pids:
+                        pid_display = ", ".join(pids)
+            except (ADBError, ValueError, IndexError):
+                pass
+
+        # Display UID with both username and numeric format
+        if uid and numeric_uid:
+            uid_display = f"{uid} ({numeric_uid})"
+        elif uid:
+            uid_display = uid
+        else:
+            uid_display = "Unknown"
 
         # Get version
         version = "Unknown"
@@ -70,6 +85,32 @@ def info(package, device):
                 # Silently fall back to Unknown if arch detection fails
                 pass
 
+        # Get current activity
+        current_activity = "N/A"
+        try:
+            top_activity = resolver.get_top_activity()
+            if top_activity and top_activity.startswith(pkg + '/'):
+                # Extract just the activity name
+                current_activity = top_activity.split('/', 1)[1]
+            elif top_activity:
+                # App is not in foreground
+                current_activity = "Not in foreground"
+        except (ADBError, ValueError):
+            # Silently fall back to N/A if activity detection fails
+            pass
+
+        # Get thread count
+        threads = "N/A"
+        if pids:
+            try:
+                # Get thread count from /proc/[pid]/status for first PID
+                status_output = adb.shell(f"cat /proc/{pids[0]}/status | grep Threads:", check=False)
+                if status_output and "Threads:" in status_output:
+                    threads = status_output.split(':')[1].strip()
+            except (ADBError, ValueError, IndexError):
+                # Silently fall back to N/A if thread count detection fails
+                pass
+
         # Display info
         table = Table(show_header=False, box=None)
         table.add_column("Property", style="cyan")
@@ -77,9 +118,11 @@ def info(package, device):
 
         table.add_row("Package", pkg)
         table.add_row("Version", version)
-        table.add_row("PID", pid)
-        table.add_row("UID", uid)
+        table.add_row("PID", pid_display)
+        table.add_row("UID", uid_display)
+        table.add_row("Threads", threads)
         table.add_row("Architecture", arch)
+        table.add_row("Activity", current_activity)
         table.add_row("Path", path)
 
         console.print(table)
@@ -330,6 +373,33 @@ def libs(package, device):
 @click.command()
 @click.argument('package', required=False)
 @click.option('-d', '--device', help='Device serial number')
+def uid(package, device):
+    """Get numeric UID for an app.
+
+    If PACKAGE is not provided, uses the current foreground app.
+    """
+    try:
+        adb = DeviceManager.get_adb(device)
+        resolver = PackageResolver(adb)
+        pkg = resolver.resolve_package(package)
+
+        # Get numeric UID
+        numeric_uid = resolve_numeric_uid(adb, pkg)
+
+        if numeric_uid:
+            console.print(numeric_uid)
+        else:
+            console.print(f"[red]Error:[/red] Could not get UID for {pkg}")
+            sys.exit(1)
+
+    except (ADBError, ValueError) as e:
+        console.print(f"[red]Error:[/red] {e}")
+        sys.exit(1)
+
+
+@click.command()
+@click.argument('package', required=False)
+@click.option('-d', '--device', help='Device serial number')
 def ps(package, device):
     """Show app processes.
 
@@ -482,7 +552,12 @@ def activity(device):
 
         top_activity = resolver.get_top_activity()
         if top_activity:
-            console.print(top_activity)
+            # Add color: package in green, activity in yellow
+            if '/' in top_activity:
+                parts = top_activity.split('/', 1)
+                console.print(f"[green]{parts[0]}[/green]/[yellow]{parts[1]}[/yellow]")
+            else:
+                console.print(f"[green]{top_activity}[/green]")
         else:
             console.print("[yellow]No activity found[/yellow]")
             sys.exit(1)

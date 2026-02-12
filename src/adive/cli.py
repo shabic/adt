@@ -23,7 +23,7 @@ from .commands import app, data, process, utils, input as input_cmd
 from .commands.memory import dump_memory
 
 # Register app commands
-cli.add_command(app.info, 'info')
+cli.add_command(app.current, 'current')
 cli.add_command(app.kill, 'kill')
 cli.add_command(app.pull_apk, 'pull-apk')
 cli.add_command(app.pull_apks, 'pull-apks')
@@ -32,6 +32,7 @@ cli.add_command(app.uninstall, 'uninstall')
 cli.add_command(app.libs, 'libs')
 cli.add_command(app.ps, 'ps')
 cli.add_command(app.path, 'path')
+cli.add_command(app.uid, 'uid')
 cli.add_command(app.activity, 'activity')
 cli.add_command(app.activities, 'activities')
 cli.add_command(app.install_multiple, 'install-multiple')

@@ -8,7 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Added
 
-- App management: info, kill, pull-apk, pull-apks, install-multiple, clean, uninstall, libs, ps, path
+- App management: current, kill, pull-apk, pull-apks, install-multiple, clean, uninstall, libs, ps, path, uid
 - Process inspection: maps, fds, status with multi-process interactive selection
 - Memory dump: address range dump and `--so` mode for SO library dumping via `dd`
 - Data operations: backup, restore, grep (requires root)

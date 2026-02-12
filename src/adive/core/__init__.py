@@ -14,7 +14,8 @@ from .utils import (
     validate_package_name,
     escape_shell_arg,
     validate_pid,
-    resolve_uid
+    resolve_uid,
+    resolve_numeric_uid
 )
 
 __all__ = [
@@ -26,5 +27,6 @@ __all__ = [
     'validate_package_name',
     'escape_shell_arg',
     'validate_pid',
-    'resolve_uid'
+    'resolve_uid',
+    'resolve_numeric_uid'
 ]
