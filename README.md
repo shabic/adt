@@ -1,4 +1,4 @@
-# Adive - Android Dive Tools
+# ADT - Android Debug Tools
 
 A modern Python CLI toolkit for Android debugging and exploration, providing enhanced adb commands with rich terminal output and interactive device selection.
 
@@ -23,11 +23,11 @@ Dive deep into your Android apps and devices.
 ### Install from source
 
 ```bash
-cd adive
+cd adt
 pip install -e .
 ```
 
-This will install the `adive` command globally.
+This will install the `adt` command globally.
 
 ## Usage
 
@@ -35,103 +35,103 @@ This will install the `adive` command globally.
 
 ```bash
 # Show app information (auto-detects foreground app)
-adive current
+adt current
 
 # Show info for specific package
-adive current com.example.app
+adt current com.example.app
 
 # Kill foreground app
-adive kill
+adt kill
 
 # Pull base APK with version in filename
-adive pull-apk
+adt pull-apk
 
 # Pull all APKs (including splits)
-adive pull-apks
+adt pull-apks
 
 # Install split APKs from directory (default: current directory)
-adive install-multiple
+adt install-multiple
 
 # Install split APKs from specific directory
-adive install-multiple ./27.2.0.0/
+adt install-multiple ./27.2.0.0/
 
 # Install split APKs and replace existing app
-adive install-multiple -r
+adt install-multiple -r
 
 # Clear app data
-adive clean
+adt clean
 
 # Uninstall app
-adive uninstall
+adt uninstall
 
 # List native libraries
-adive libs
+adt libs
 
 # Show app processes
-adive ps
+adt ps
 
 # Get app path
-adive path
+adt path
 
 # Get numeric UID
-adive uid
+adt uid
 
 # Show current foreground activity
-adive activity
+adt activity
 
 # Show all activities in the stack
-adive activities
+adt activities
 ```
 
 ### Memory Dump
 
 ```bash
 # Dump a specific address range (requires root)
-adive dump-memory 0x12345000 0x12346000 com.example.app
+adt dump-memory 0x12345000 0x12346000 com.example.app
 
 # Dump all readable regions of a specific SO (requires root)
-adive dump-memory --so libc.so com.example.app
+adt dump-memory --so libc.so com.example.app
 
 # Dump SO with custom output path
-adive dump-memory --so libc.so -o /tmp/libc_dump.so com.example.app
+adt dump-memory --so libc.so -o /tmp/libc_dump.so com.example.app
 
 # Omit package to auto-detect foreground app
-adive dump-memory --so libc.so
+adt dump-memory --so libc.so
 ```
 
 ### Data Operations
 
 ```bash
 # Backup app data (requires root)
-adive backup
+adt backup
 
 # Restore app data (requires root)
-adive restore backup.tar.gz
-adive restore com.example.app backup.tar.gz
+adt restore backup.tar.gz
+adt restore com.example.app backup.tar.gz
 
 # Search in app data (requires root)
-adive grep "pattern"
+adt grep "pattern"
 ```
 
 ### Process Information
 
 ```bash
 # Show memory maps (auto-selects process if multiple)
-adive maps
+adt maps
 
 # Show memory maps with filter (faster for large outputs)
-adive maps --filter .so
-adive maps --filter .dex
-adive maps -f libnative
+adt maps --filter .so
+adt maps --filter .dex
+adt maps -f libnative
 
 # Specify PID directly (skip process selection)
-adive maps --pid 12345
+adt maps --pid 12345
 
 # Show file descriptors
-adive fds
+adt fds
 
 # Show process status
-adive status
+adt status
 ```
 
 **Multi-Process Selection:**
@@ -154,23 +154,23 @@ Select process [1]: 2
 
 ```bash
 # Send text input to device
-adive input-text "Hello World"
+adt input-text "Hello World"
 ```
 
 ### Utilities
 
 ```bash
 # Get device IP address
-adive ip
+adt ip
 
 # Get system property
-adive getprop ro.build.version.release
+adt getprop ro.build.version.release
 
 # List all properties
-adive getprop
+adt getprop
 
 # Execute command as root
-adive su "ls /data/data"
+adt su "ls /data/data"
 ```
 
 ### Multi-Device Support
@@ -201,7 +201,7 @@ Features:
 Or specify device explicitly:
 
 ```bash
-adive current -d 2816c5b
+adt current -d 2816c5b
 ```
 
 ## Dependencies
@@ -221,7 +221,7 @@ adive current -d 2816c5b
 
 ## Performance Tips
 
-- Use `adive maps --filter <pattern>` to filter large outputs on the device side
+- Use `adt maps --filter <pattern>` to filter large outputs on the device side
 - Process commands use direct output for maximum speed
 - Filter examples: `--filter .so`, `--filter .dex`, `--filter libnative`
 - When piping output, selection prompts are automatically skipped

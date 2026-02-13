@@ -3,16 +3,16 @@ requires = ["setuptools>=45", "wheel", "setuptools_scm[toml]>=6.2"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "adive"
+name = "adt"
 version = "0.1.0"
-description = "Adive - A modern CLI toolkit for Android debugging and exploration"
+description = "ADT - A modern CLI toolkit for Android debugging and exploration"
 readme = "README.md"
 requires-python = ">=3.8"
 license = {text = "MIT"}
 authors = [
-    {name = "Adive Contributors"}
+    {name = "ADT Contributors"}
 ]
-keywords = ["android", "adb", "debugging", "reverse-engineering", "cli", "dive"]
+keywords = ["android", "adb", "debugging", "reverse-engineering", "cli"]
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Developers",
@@ -38,11 +38,11 @@ dev = [
 ]
 
 [project.scripts]
-adive = "adive.cli:main"
+adt = "adt.cli:main"
 
 [project.urls]
-Homepage = "https://github.com/shabic/adive"
-Repository = "https://github.com/shabic/adive"
+Homepage = "https://github.com/shabic/adt"
+Repository = "https://github.com/shabic/adt"
 
 [tool.setuptools]
 package-dir = {"" = "src"}

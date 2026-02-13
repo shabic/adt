@@ -1,4 +1,4 @@
-"""Main CLI entry point for Adive."""
+"""Main CLI entry point for ADT."""
 import sys
 import click
 from rich.console import Console
@@ -11,7 +11,7 @@ console = Console()
 @click.group()
 @click.version_option(version=__version__)
 def cli():
-    """Adive - Android Dive Tools
+    """ADT - Android Debug Tools
 
     A modern CLI toolkit for Android debugging and exploration.
     """
