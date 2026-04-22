@@ -35,7 +35,7 @@ def current(package, device):
             try:
                 # Get all PIDs with this UID (uid is already in username format from resolve_uid)
                 escaped_uid = escape_shell_arg(uid)
-                ps_output = adb.shell(f"ps -A | grep -wF '{escaped_uid}'", check=False)
+                ps_output = adb.shell(f"ps -A | grep -F '{escaped_uid}'", check=False)
                 if ps_output and ps_output.strip():
                     # Parse PIDs from ps output (PID is the second column)
                     for line in ps_output.strip().split('\n'):
@@ -415,9 +415,9 @@ def ps(package, device):
             console.print(f"[yellow]No processes found for {pkg}[/yellow]")
             return
 
-        # Get all processes with this UID using word-boundary match
+        # Get all processes with this UID (fixed-string match; -w unsupported on Android grep)
         escaped_uid = escape_shell_arg(uid)
-        all_ps_output = adb.shell(f"ps -A | grep -wF '{escaped_uid}'")
+        all_ps_output = adb.shell(f"ps -A | grep -F '{escaped_uid}'")
         console.print(f"[bold cyan]Processes for {pkg}:[/bold cyan]\n")
         console.print(all_ps_output)
 
